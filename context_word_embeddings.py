@@ -18,7 +18,8 @@ class ContextWordEmbeddings:
     - https://becominghuman.ai/extract-a-feature-vector-for-any-image-with-pytorch-9717561d1d4c
     '''
     def __init__(self):
-        # self._download_model()
+        if os.path.isdir('pytorch/') == False:
+            self._download_model()
         self._tokenizer = BertTokenizer.from_pretrained("pytorch/", do_lower_case=False)
         self._model = BertForMaskedLM.from_pretrained("pytorch/")
 
@@ -46,7 +47,7 @@ class ContextWordEmbeddings:
         tokens_tensor = torch.tensor([indexed_tokens])
         return tokens_tensor
     
-    def _get_contextualized_word_embedding(self, text):
+    def get_contextualized_word_embedding(self, text):
         '''
         Using BETO's last four layers, get the contextual embedding of the text.
         1. Get the embedding of each token
@@ -86,6 +87,6 @@ class ContextWordEmbeddings:
         '''
         Given two texts, calculate the cosine similarity between their contextualized word embeddings.
         '''
-        text1_embedding = self._get_contextualized_word_embedding(text1)
-        text2_embedding = self._get_contextualized_word_embedding(text2)
+        text1_embedding = self.get_contextualized_word_embedding(text1)
+        text2_embedding = self.get_contextualized_word_embedding(text2)
         return distance.cosine(text1_embedding, text2_embedding)
