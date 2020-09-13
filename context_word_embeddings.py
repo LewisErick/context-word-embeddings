@@ -1,3 +1,7 @@
+'''
+Contextual Word Embeddings implementation
+LewisErick
+'''
 import os
 import shutil
 import tarfile 
