@@ -36,7 +36,26 @@ class ContextWordEmbeddings:
         config =  wget.download('https://users.dcc.uchile.cl/~jperez/beto/cased_2M/config.json')
 
         with tarfile.open("pytorch_weights.tar.gz") as f:
-            f.extractall()
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(f)
         
         os.makedirs('pytorch', exist_ok=True)
         shutil.move('config.json', 'pytorch/config.json')
